@@ -1,17 +1,33 @@
-﻿using ShoppingNightMongo.Dtos.CategoryDtos;
+﻿using AutoMapper;
+using MongoDB.Driver;
+using ShoppingNightMongo.Dtos.CategoryDtos;
+using ShoppingNightMongo.Entities;
+using ShoppingNightMongo.Settings;
 
 namespace ShoppingNightMongo.Services.CategoryServices
 {
     public class CategoryService : ICategoryService
     {
-        public Task CreateCategoryAsync(CreateCategoryDto createCategoryDto)
+        private readonly IMapper _mapper;
+        private readonly IMongoCollection<Category> _categoryCollection;
+        public CategoryService(IMapper mapper,IDatabaseSettings _databaseSettings)
         {
-            throw new NotImplementedException();
+            var client = new MongoClient(_databaseSettings.ConnectionString);
+            var database = client.GetDatabase(_databaseSettings.DatabaseName);
+            _categoryCollection = database.GetCollection<Category>(_databaseSettings.CategoryCollectionName);
+            _mapper = mapper;
         }
 
-        public Task DeleteCategoryAsync(string id)
+        
+        public async Task CreateCategoryAsync(CreateCategoryDto createCategoryDto)
         {
-            throw new NotImplementedException();
+            var value = _mapper.Map<Category>(createCategoryDto);
+            await _categoryCollection.InsertOneAsync(value);
+        }
+
+        public async Task DeleteCategoryAsync(string id)
+        {
+            await _categoryCollection.DeleteOneAsync(id);
         }
 
         public Task<List<ResultCategoryDto>> GetAllCategoryAsync()
@@ -24,9 +40,10 @@ namespace ShoppingNightMongo.Services.CategoryServices
             throw new NotImplementedException();
         }
 
-        public Task UpdateCategoryAsync(UpdateCategoryDto updateCategoryDto)
+        public async Task UpdateCategoryAsync(UpdateCategoryDto updateCategoryDto)
         {
-            throw new NotImplementedException();
+            var value = _mapper.Map<Category>(_categoryCollection);
+            await _categoryCollection.FindOneAndReplaceAsync(x => x.CategoryId == updateCategoryDto.CategoryId, value);
         }
     }
 }
