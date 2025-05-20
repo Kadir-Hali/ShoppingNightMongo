@@ -37,5 +37,19 @@ namespace ShoppingNightMongo.Controllers
             await _categoryService.DeleteCategoryAsync(id);
             return RedirectToAction("CategoryList");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCategory(string id)
+        {
+            var value = await _categoryService.GetCategoryByIdAsync(id);
+            return View(value);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryDto updateCategoryDto)
+        {
+            await _categoryService.UpdateCategoryAsync(updateCategoryDto);
+            return RedirectToAction("CategoryList");
+        }
     }
 }
