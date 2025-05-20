@@ -30,14 +30,16 @@ namespace ShoppingNightMongo.Services.ProductServices
             await _productCollection.DeleteOneAsync(x => x.ProductId == id);
         }
 
-        public Task<List<ResultProductDto>> GetAllProductAsync()
+        public async Task<List<ResultProductDto>> GetAllProductAsync()
         {
-            throw new NotImplementedException();
+            var values = await _productCollection.Find(x => true).ToListAsync();
+            return _mapper.Map<List<ResultProductDto>>(values);
         }
 
-        public Task<GetProductByIdDto> GetProductByIdAsync(string id)
+        public async Task<GetProductByIdDto> GetProductByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var value = await _productCollection.Find(x => x.ProductId == id).FirstOrDefaultAsync();
+            return _mapper.Map<GetProductByIdDto>(value);
         }
 
         public async Task UpdateProductAsync(UpdateProductDto updateProductDto)
