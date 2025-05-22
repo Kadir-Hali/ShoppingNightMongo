@@ -20,7 +20,7 @@ namespace ShoppingNightMongo.Controllers
         }
 
         [HttpGet]
-        public IActionResult CretaeCategory()
+        public IActionResult CreateCategory()
         {
             return View();
         }
